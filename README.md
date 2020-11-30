@@ -13,7 +13,8 @@ As you work through the Node.js, Express & PostgreSQL module, you will be writin
 | `src/products/`                  | A folder that contains the `products.controller.js` and `products.router.js` files for the `products` resource.       |
 | `src/categories/`                | A folder that contains the `categories.controller.js` and `categories.router.js` files for the `categories` resource. |
 | `src/suppliers/`                 | A folder that contains the `suppliers.controller.js` and `suppliers.router.js` files for the `suppliers` resource.    |
-| `src/db/`                        | An empty folder where you will add migration and seed files for your database later on.                               |
+| `src/db/`                        | A folder where you will add migration and seed files for your database later on.                                      |
+| `src/db/fixtures`                | A folder containing sample data you will seed your database with later on.                                            |
 | `src/errors/methodNotAllowed.js` | An error handler for forbidden request methods                                                                        |
 | `.env.sample`                    | A sample environment configuration file                                                                               |
 
