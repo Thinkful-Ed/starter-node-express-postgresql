@@ -31,20 +31,18 @@ function hasOnlyValidProperties (req, res, next) {
 
 const hasRequiredProperties = hasProperties("supplier_name", "supplier_email");
 
-function create (req, res) {
-  suppliersService
-    .create(req.body.data)
-    .then((data) => res.status(201).json({ data }));
+async function supplierExists (req, res, next) {
+  const supplier = await suppliersService.read(req.params.supplierId);
+  if (supplier) {
+    res.locals.supplier = supplier;
+    return next();
+  }
+  next({ status: 404, message: `Supplier cannot be found.` });
 }
 
-function supplierExists (req, res, next) {
-  suppliersService.read(req.params.supplierId).then((supplier) => {
-    if (supplier) {
-      res.locals.supplier = supplier;
-      return next();
-    }
-    next({ status: 404, message: `Supplier cannot be found.` });
-  });
+async function create (req, res) {
+  const data = await suppliersService.create(req.body.data)
+  res.status(201).json({ data });
 }
 
 function update (req, res) {
@@ -52,13 +50,14 @@ function update (req, res) {
     ...req.body.data,
     supplier_id: res.locals.supplier.supplier_id,
   };
-  suppliersService.update(updatedSupplier).then((data) => res.json({ data }));
+  const data = suppliersService.update(updatedSupplier);
+  res.json({ data });
 }
 
-function destroy (req, res) {
-  suppliersService
-    .delete(res.locals.supplier.supplier_id)
-    .then(() => res.sendStatus(204));
+async function destroy(req, res, next) {
+  const { supplier } = res.locals;
+  await suppliersService.delete(supplier.supplier_id);
+  res.sendStatus(204);
 }
 
 module.exports = {
