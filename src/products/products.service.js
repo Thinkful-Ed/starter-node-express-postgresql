@@ -37,10 +37,59 @@ function listTotalWeightByProduct () {
     .groupBy("product_title", "product_sku");
 }
 
+const productsSuppliersJoin = knex("products as p").join(
+  "suppliers as s",
+  "p.supplier_id",
+  "s.supplier_id"
+);
+
+const productsCategoriesJoin = knex("products as p")
+  .join("products_categories as pc", "p.product_id", "pc.product_id")
+  .join("categories as c", "pc.category_id", "c.category_id");
+
+const productsCategoriesSuppliersJoin = knex("products as p")
+  .join("products_categories as pc", "p.product_id", "pc.product_id")
+  .join("categories as c", "pc.category_id", "c.category_id")
+  .join("suppliers as s", "p.supplier_id", "s.supplier_id");
+
+
+const getProductByIdWithCategories = productId =>
+  productsCategoriesJoin
+    .select("p.*", "c.*")
+    .where({ "p.product_id": productId })
+    .first();
+
+const getProductByIdWithSuppliers = productId =>
+  productsSuppliersJoin
+    .select("p.*", "s.*")
+    .where({ "p.product_id": productId })
+    .first();
+
+const getProductByIdWithCategoriesAndSuppliers = productId =>
+  productsCategoriesSuppliersJoin
+    .select("p.*", "c.*", "s.*")
+    .where({ "p.product_id": productId })
+    .first();
+
+const getTotalWeightOfProductsByCategory = () =>
+  productsCategoriesJoin
+    .select(
+      "c.category_name",
+      knex.raw(
+        "sum(p.product_weight_in_lbs * p.product_quantity_in_stock) as total_weight_by_category"
+      )
+    )
+    .groupBy("c.category_name")
+    .orderBy("total_weight_by_category");
+
 module.exports = {
   list,
   read,
   listOutOfStockCount,
   listPriceSummary,
   listTotalWeightByProduct,
+  getProductByIdWithCategories,
+  getProductByIdWithSuppliers,
+  getProductByIdWithCategoriesAndSuppliers,
+  getTotalWeightOfProductsByCategory,
 };
