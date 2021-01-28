@@ -12,9 +12,62 @@ function supplierExists(req, res, next) {
   });
 }
 
+function hasValidFields(req, res, next) {
+  const { data = {} } = req.body;
+  const validFields = new Set([
+    "supplier_name",
+    "supplier_address_line_1",
+    "supplier_address_line_2",
+    "supplier_city",
+    "supplier_state",
+    "supplier_zip",
+    "supplier_phone",
+    "supplier_email",
+    "supplier_notes",
+    "supplier_type_of_goods",
+  ]);
+
+  const invalidFields = Object.keys(data).filter(
+    field => !validFields.has(field)
+  );
+
+  if (invalidFields.length)
+    return next({
+      status: 400,
+      message: `Invalid field(s): ${invalidFields.join(", ")}`,
+    });
+  next();
+}
+
+function bodyDataHas(propertyName) {
+  return function (req, res, next) {
+    const { data = {} } = req.body;
+    if (data[propertyName]) {
+      return next();
+    }
+    next({ status: 400, message: `Supplier must include a ${propertyName}` });
+  };
+}
+
+const hasSupplierName = bodyDataHas("supplier_name");
+const hasSupplierEmail = bodyDataHas("supplier_email");
+
 function create(req, res, next) {
-  SuppliersService.createSupplier(req.body.data).then(newSupplier =>
-    res.status(201).json({ data: newSupplier })
+  const newSupplier = ({
+    supplier_name,
+    supplier_address_line_1,
+    supplier_address_line_2,
+    supplier_city,
+    supplier_state,
+    supplier_zip,
+    supplier_phone,
+    supplier_email,
+    supplier_notes,
+    supplier_type_of_goods,
+  } = req.body.data);
+
+  SuppliersService.createSupplier(newSupplier).then(createdSupplier =>
+    res.status(201).json({ data: createdSupplier })
   );
 }
 
@@ -38,7 +91,7 @@ function destroy(req, res, next) {
 }
 
 module.exports = {
-  create: [create],
+  create: [hasValidFields, hasSupplierName, hasSupplierEmail, create],
   update: [supplierExists, update],
   destroy: [supplierExists, destroy],
 };
