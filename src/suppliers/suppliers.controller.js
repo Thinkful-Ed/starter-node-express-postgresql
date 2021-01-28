@@ -1,17 +1,5 @@
 const SuppliersService = require("./suppliers.service.js");
 
-function supplierExists(req, res, next) {
-  const error = { status: 404, message: `Supplier cannot be found.` };
-  const { supplierId } = req.params;
-  if (!supplierId) return next(error);
-
-  SuppliersService.getSupplierById(supplierId).then(supplier => {
-    if (!supplier) return next(error);
-    res.locals.supplier = supplier;
-    next();
-  });
-}
-
 function hasValidFields(req, res, next) {
   const { data = {} } = req.body;
   const validFields = new Set([
@@ -69,6 +57,18 @@ function create(req, res, next) {
   SuppliersService.createSupplier(newSupplier).then(createdSupplier =>
     res.status(201).json({ data: createdSupplier })
   );
+}
+
+function supplierExists(req, res, next) {
+  const error = { status: 404, message: `Supplier cannot be found.` };
+  const { supplierId } = req.params;
+  if (!supplierId) return next(error);
+
+  SuppliersService.getSupplierById(supplierId).then(supplier => {
+    if (!supplier) return next(error);
+    res.locals.supplier = supplier;
+    next();
+  });
 }
 
 function update(req, res, next) {
