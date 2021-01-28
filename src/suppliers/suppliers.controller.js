@@ -45,12 +45,12 @@ async function create (req, res) {
   res.status(201).json({ data });
 }
 
-function update (req, res) {
+async function update (req, res) {
   const updatedSupplier = {
     ...req.body.data,
     supplier_id: res.locals.supplier.supplier_id,
   };
-  const data = suppliersService.update(updatedSupplier);
+  const data = await suppliersService.update(updatedSupplier);
   res.json({ data });
 }
 
