@@ -15,6 +15,6 @@ router
   .route("/total_weight_by_product")
   .get(controller.listTotalWeightByProduct)
   .all(methodNotAllowed);
-router.route("/:productId").get(controller.read).all(methodNotAllowed);
+router.route("/:productId([0-9]+)").get(controller.read).all(methodNotAllowed);
 
 module.exports = router;
