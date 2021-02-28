@@ -21,6 +21,6 @@ async function list(req, res) {
 }
 
 module.exports = {
-  read: [asyncErrorBoundary(productExists), read],
+  read: [asyncErrorBoundary(productExists), asyncErrorBoundary(read)],
   list: asyncErrorBoundary(list),
 };
