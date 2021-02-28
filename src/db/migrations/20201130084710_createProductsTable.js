@@ -1,5 +1,5 @@
 exports.up = function (knex) {
-  return knex.schema.createTable("products", table => {
+  return knex.schema.createTable("products", (table) => {
     table.increments("product_id").primary();
     table.string("product_sku");
     table.string("product_name");

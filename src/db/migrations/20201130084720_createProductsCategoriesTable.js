@@ -1,5 +1,5 @@
 exports.up = function (knex) {
-  return knex.schema.createTable("products_categories", table => {
+  return knex.schema.createTable("products_categories", (table) => {
     table.integer("product_id").unsigned().notNullable();
     table
       .foreign("product_id")

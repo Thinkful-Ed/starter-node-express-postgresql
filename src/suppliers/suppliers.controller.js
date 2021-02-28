@@ -1,5 +1,6 @@
 const suppliersService = require("./suppliers.service.js");
 const hasProperties = require("../errors/hasProperties");
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 const VALID_PROPERTIES = [
   "supplier_name",
@@ -14,7 +15,7 @@ const VALID_PROPERTIES = [
   "supplier_type_of_goods",
 ];
 
-function hasOnlyValidProperties (req, res, next) {
+function hasOnlyValidProperties(req, res, next) {
   const { data = {} } = req.body;
 
   const invalidFields = Object.keys(data).filter(
@@ -31,7 +32,7 @@ function hasOnlyValidProperties (req, res, next) {
 
 const hasRequiredProperties = hasProperties("supplier_name", "supplier_email");
 
-async function supplierExists (req, res, next) {
+async function supplierExists(req, res, next) {
   const supplier = await suppliersService.read(req.params.supplierId);
   if (supplier) {
     res.locals.supplier = supplier;
@@ -40,12 +41,12 @@ async function supplierExists (req, res, next) {
   next({ status: 404, message: `Supplier cannot be found.` });
 }
 
-async function create (req, res) {
-  const data = await suppliersService.create(req.body.data)
+async function create(req, res) {
+  const data = await suppliersService.create(req.body.data);
   res.status(201).json({ data });
 }
 
-async function update (req, res) {
+async function update(req, res) {
   const updatedSupplier = {
     ...req.body.data,
     supplier_id: res.locals.supplier.supplier_id,
@@ -54,14 +55,23 @@ async function update (req, res) {
   res.json({ data });
 }
 
-async function destroy(req, res, next) {
+async function destroy(req, res) {
   const { supplier } = res.locals;
   await suppliersService.delete(supplier.supplier_id);
   res.sendStatus(204);
 }
 
 module.exports = {
-  create: [hasOnlyValidProperties, hasRequiredProperties, create],
-  update: [supplierExists, hasOnlyValidProperties, hasRequiredProperties, update],
-  destroy: [supplierExists, destroy],
+  create: [
+    hasOnlyValidProperties,
+    hasRequiredProperties,
+    asyncErrorBoundary(create),
+  ],
+  update: [
+    asyncErrorBoundary(supplierExists),
+    hasOnlyValidProperties,
+    hasRequiredProperties,
+    asyncErrorBoundary(update),
+  ],
+  destroy: [asyncErrorBoundary(supplierExists), asyncErrorBoundary(destroy)],
 };
