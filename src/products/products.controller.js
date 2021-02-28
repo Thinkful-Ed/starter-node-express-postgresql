@@ -1,4 +1,5 @@
 const productsService = require("./products.service");
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 async function productExists(req, res, next) {
   const product = await productsService.read(req.params.productId);
@@ -20,6 +21,6 @@ async function list(req, res) {
 }
 
 module.exports = {
-  read: [productExists, read],
-  list,
+  read: [asyncErrorBoundary(productExists), read],
+  list: asyncErrorBoundary(list),
 };
