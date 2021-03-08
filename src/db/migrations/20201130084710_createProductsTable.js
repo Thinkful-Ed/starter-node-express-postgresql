@@ -4,10 +4,8 @@ exports.up = function (knex) {
     table.string("product_sku");
     table.string("product_name");
     table.text("product_description");
-    table.decimal("product_price");
     table.integer("product_quantity_in_stock");
     table.decimal("product_weight_in_lbs");
-
     table.integer("supplier_id").unsigned().notNullable();
     table
       .foreign("supplier_id")
