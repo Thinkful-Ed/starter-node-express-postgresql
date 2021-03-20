@@ -1,22 +1,24 @@
-const SuppliersService = require("./suppliers.service.js");
+const suppliersService = require("./suppliers.service.js");
+const hasProperties = require("../errors/hasProperties");
 
-function hasValidFields(req, res, next) {
+const VALID_PROPERTIES = [
+  "supplier_name",
+  "supplier_address_line_1",
+  "supplier_address_line_2",
+  "supplier_city",
+  "supplier_state",
+  "supplier_zip",
+  "supplier_phone",
+  "supplier_email",
+  "supplier_notes",
+  "supplier_type_of_goods",
+];
+
+function hasOnlyValidProperties (req, res, next) {
   const { data = {} } = req.body;
-  const validFields = new Set([
-    "supplier_name",
-    "supplier_address_line_1",
-    "supplier_address_line_2",
-    "supplier_city",
-    "supplier_state",
-    "supplier_zip",
-    "supplier_phone",
-    "supplier_email",
-    "supplier_notes",
-    "supplier_type_of_goods",
-  ]);
 
   const invalidFields = Object.keys(data).filter(
-    field => !validFields.has(field)
+    (field) => !VALID_PROPERTIES.includes(field)
   );
 
   if (invalidFields.length)
@@ -27,71 +29,40 @@ function hasValidFields(req, res, next) {
   next();
 }
 
-function bodyDataHas(propertyName) {
-  return function (req, res, next) {
-    const { data = {} } = req.body;
-    if (data[propertyName]) {
+const hasRequiredProperties = hasProperties("supplier_name", "supplier_email");
+
+function create (req, res) {
+  suppliersService
+    .create(req.body.data)
+    .then((data) => res.status(201).json({ data }));
+}
+
+function supplierExists (req, res, next) {
+  suppliersService.read(req.params.supplierId).then((supplier) => {
+    if (supplier) {
+      res.locals.supplier = supplier;
       return next();
     }
-    next({ status: 400, message: `Supplier must include a ${propertyName}` });
-  };
-}
-
-const hasSupplierName = bodyDataHas("supplier_name");
-const hasSupplierEmail = bodyDataHas("supplier_email");
-
-function create(req, res, next) {
-  const newSupplier = ({
-    supplier_name,
-    supplier_address_line_1,
-    supplier_address_line_2,
-    supplier_city,
-    supplier_state,
-    supplier_zip,
-    supplier_phone,
-    supplier_email,
-    supplier_notes,
-    supplier_type_of_goods,
-  } = req.body.data);
-
-  SuppliersService.createSupplier(newSupplier).then(createdSupplier =>
-    res.status(201).json({ data: createdSupplier })
-  );
-}
-
-function supplierExists(req, res, next) {
-  const error = { status: 404, message: `Supplier cannot be found.` };
-  const { supplierId } = req.params;
-  if (!supplierId) return next(error);
-
-  SuppliersService.getSupplierById(supplierId).then(supplier => {
-    if (!supplier) return next(error);
-    res.locals.supplier = supplier;
-    next();
+    next({ status: 404, message: `Supplier cannot be found.` });
   });
 }
 
-function update(req, res, next) {
-  const {
-    supplier: { supplier_id: supplierId, ...supplier },
-  } = res.locals;
-  const updatedSupplier = { ...supplier, ...req.body.data };
-
-  SuppliersService.updateSupplierById(
-    supplierId,
-    updatedSupplier
-  ).then(updatedSupplier => res.json({ data: updatedSupplier }));
+function update (req, res) {
+  const updatedSupplier = {
+    ...req.body.data,
+    supplier_id: res.locals.supplier.supplier_id,
+  };
+  suppliersService.update(updatedSupplier).then((data) => res.json({ data }));
 }
 
-function destroy(req, res, next) {
-  const { supplier } = res.locals;
-  SuppliersService.deleteSupplierById(supplier.supplier_id).then(() =>
-    res.sendStatus(204)
-  );
+function destroy (req, res) {
+  suppliersService
+    .delete(res.locals.supplier.supplier_id)
+    .then(() => res.sendStatus(204));
 }
 
 module.exports = {
-  create: [hasValidFields, hasSupplierName, hasSupplierEmail, create],
-  update: [supplierExists, update],
+  create: [hasOnlyValidProperties, hasRequiredProperties, create],
+  update: [supplierExists, hasOnlyValidProperties, hasRequiredProperties, update],
   destroy: [supplierExists, destroy],
 };

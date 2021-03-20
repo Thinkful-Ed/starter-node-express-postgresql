@@ -1,24 +1,27 @@
 const knex = require("../db/connection");
 
-const suppliers = knex("suppliers");
+function create(supplier) {
+  return knex("suppliers").insert(supplier).returning("*");
+}
 
-const createSupplier = supplier => suppliers.insert(supplier).returning("*");
+function read(supplier_id) {
+  return knex("suppliers").select("*").where({ supplier_id }).first();
+}
 
-const getSupplierById = supplierId =>
-  suppliers.select("*").where({ supplier_id: supplierId }).first();
-
-const updateSupplierById = (supplierId, updatedSupplier) =>
-  suppliers
+function update(updatedSupplier) {
+  return knex("suppliers")
     .select("*")
-    .where({ supplier_id: supplierId })
+    .where({ supplier_id: updatedSupplier.supplier_id })
     .update(updatedSupplier, "*");
+}
 
-const deleteSupplierById = supplierId =>
-  suppliers.where({ supplier_id: supplierId }).del();
+function destroy(supplierId) {
+  return knex("suppliers").where({ supplier_id: supplierId }).del();
+}
 
 module.exports = {
-  createSupplier,
-  getSupplierById,
-  updateSupplierById,
-  deleteSupplierById,
+  create,
+  read,
+  update,
+  delete: destroy,
 };

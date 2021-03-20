@@ -1,7 +1,9 @@
 const knex = require("../db/connection");
 
-const getAllCategories = () => knex("categories").select("*");
+function list () {
+  return knex("categories").select("*");
+}
 
 module.exports = {
-  getAllCategories,
+  list,
 };

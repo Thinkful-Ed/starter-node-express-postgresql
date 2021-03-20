@@ -1,30 +1,25 @@
-const ProductsService = require("./products.service");
+const productsService = require("./products.service");
 
 function productExists(req, res, next) {
-  const error = { status: 404, message: `Product cannot be found.` };
-
-  const { productId } = req.params;
-  if (!productId) return next(error);
-
-  ProductsService.getProductById(productId).then(product => {
-    if (!product) return next(error);
-    res.locals.product = product;
-    next();
+  productsService.read(req.params.productId).then(product => {
+    if (product) {
+      res.locals.product = product;
+      return next();
+    }
+    next({ status: 404, message: `Product cannot be found.` });
   });
 }
 
-function read(req, res, next) {
-  const { product } = res.locals;
-  res.json({ data: product });
+function read (req, res) {
+  const { product: data } = res.locals;
+  res.json({ data });
 }
 
-function list(req, res, next) {
-  ProductsService.getAllProducts().then(products =>
-    res.json({ data: products })
-  );
+function list (req, res) {
+  productsService.list().then((data) => res.json({ data }));
 }
 
 module.exports = {
   read: [productExists, read],
-  list: [list],
+  list,
 };
