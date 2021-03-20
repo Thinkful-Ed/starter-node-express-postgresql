@@ -1,14 +1,27 @@
 const knex = require("../db/connection");
+const mapProperties = require("../utils/properties-to-object");
 
-function list () {
+const addCategory = mapProperties({
+  category_id: "category.id",
+  category_name: "category.name",
+  category_description: "category.description",
+});
+
+function list() {
   return knex("products").select("*");
 }
 
-function read (product_id) {
-  return knex("products").select("*").where({ product_id }).first();
+function read(product_id) {
+  return knex("products as p")
+    .join("products_categories as pc", "p.product_id", "pc.product_id")
+    .join("categories as c", "pc.category_id", "c.category_id")
+    .select("p.*", "c.*")
+    .where({ "p.product_id": product_id })
+    .first()
+    .then(addCategory);
 }
 
-function listOutOfStockCount () {
+function listOutOfStockCount() {
   return knex("products")
     .select("product_quantity_in_stock as out_of_stock")
     .count("product_id")
@@ -16,7 +29,7 @@ function listOutOfStockCount () {
     .groupBy("out_of_stock");
 }
 
-function listPriceSummary () {
+function listPriceSummary() {
   return knex("products")
     .select("supplier_id")
     .min("product_price")
@@ -25,7 +38,7 @@ function listPriceSummary () {
     .groupBy("supplier_id");
 }
 
-function listTotalWeightByProduct () {
+function listTotalWeightByProduct() {
   return knex("products")
     .select(
       "product_sku",
@@ -37,42 +50,37 @@ function listTotalWeightByProduct () {
     .groupBy("product_title", "product_sku");
 }
 
-const productsSuppliersJoin = knex("products as p").join(
-  "suppliers as s",
-  "p.supplier_id",
-  "s.supplier_id"
-);
-
-const productsCategoriesJoin = knex("products as p")
-  .join("products_categories as pc", "p.product_id", "pc.product_id")
-  .join("categories as c", "pc.category_id", "c.category_id");
-
-const productsCategoriesSuppliersJoin = knex("products as p")
-  .join("products_categories as pc", "p.product_id", "pc.product_id")
-  .join("categories as c", "pc.category_id", "c.category_id")
-  .join("suppliers as s", "p.supplier_id", "s.supplier_id");
-
-
-const getProductByIdWithCategories = productId =>
-  productsCategoriesJoin
+function getProductByIdWithCategories(product_id) {
+  return knex("products as p")
+    .join("products_categories as pc", "p.product_id", "pc.product_id")
+    .join("categories as c", "pc.category_id", "c.category_id")
     .select("p.*", "c.*")
-    .where({ "p.product_id": productId })
+    .where({ "p.product_id": product_id })
     .first();
+}
 
-const getProductByIdWithSuppliers = productId =>
-  productsSuppliersJoin
+function getProductByIdWithSuppliers(product_id) {
+  return knex("products as p")
+    .join("suppliers as s", "p.supplier_id", "s.supplier_id")
     .select("p.*", "s.*")
-    .where({ "p.product_id": productId })
+    .where({ "p.product_id": product_id })
     .first();
+}
 
-const getProductByIdWithCategoriesAndSuppliers = productId =>
-  productsCategoriesSuppliersJoin
+function getProductByIdWithCategoriesAndSuppliers(product_id) {
+  return knex("products as p")
+    .join("products_categories as pc", "p.product_id", "pc.product_id")
+    .join("categories as c", "pc.category_id", "c.category_id")
+    .join("suppliers as s", "p.supplier_id", "s.supplier_id")
     .select("p.*", "c.*", "s.*")
-    .where({ "p.product_id": productId })
+    .where({ "p.product_id": product_id })
     .first();
+}
 
-const getTotalWeightOfProductsByCategory = () =>
-  productsCategoriesJoin
+function getTotalWeightOfProductsByCategory() {
+  return knex("products as p")
+    .join("products_categories as pc", "p.product_id", "pc.product_id")
+    .join("categories as c", "pc.category_id", "c.category_id")
     .select(
       "c.category_name",
       knex.raw(
@@ -81,6 +89,7 @@ const getTotalWeightOfProductsByCategory = () =>
     )
     .groupBy("c.category_name")
     .orderBy("total_weight_by_category");
+}
 
 module.exports = {
   list,

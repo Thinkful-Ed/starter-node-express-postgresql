@@ -10,7 +10,7 @@ async function productExists(req, res, next) {
   next({ status: 404, message: `Product cannot be found.` });
 }
 
-function read (req, res) {
+function read(req, res) {
   const { product: data } = res.locals;
   res.json({ data });
 }

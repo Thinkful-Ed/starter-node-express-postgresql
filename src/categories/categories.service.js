@@ -1,6 +1,6 @@
 const knex = require("../db/connection");
 
-function list () {
+function list() {
   return knex("categories").select("*");
 }
 
