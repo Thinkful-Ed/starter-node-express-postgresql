@@ -1,11 +1,11 @@
-const CategoriesService = require("./categories.service");
+const categoriesService = require("./categories.service");
 
-function list(req, res, next) {
-  CategoriesService.getAllCategories().then(categories =>
-    res.json({ data: categories })
+function list(req, res) {
+  categoriesService.list().then((data) =>
+    res.json({ data })
   );
 }
 
 module.exports = {
-  list: [list],
+  list,
 };

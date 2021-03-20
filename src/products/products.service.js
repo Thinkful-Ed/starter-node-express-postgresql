@@ -1,13 +1,14 @@
 const knex = require("../db/connection");
 
-const products = knex("products");
+function list () {
+  return knex("products").select("*");
+}
 
-const getAllProducts = () => products.select("*");
-
-const getProductById = productId =>
-  products.select("*").where({ product_id: productId }).first();
+function read (product_id) {
+  return knex("products").select("*").where({ product_id }).first();
+}
 
 module.exports = {
-  getAllProducts,
-  getProductById,
+  list,
+  read,
 };
