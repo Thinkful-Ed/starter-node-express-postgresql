@@ -1,5 +1,5 @@
 const knex = require("../db/connection");
-const mapProperties = require("../utils/properties-to-object");
+const mapProperties = require("../utils/map-properties");
 
 const addCategory = mapProperties({
   category_id: "category.id",
