@@ -11,7 +11,7 @@ async function destroy(req, res, next) {
 }
 
 module.exports = {
-  create: [create],
-  update: [update],
-  destroy: [destroy],
+  create,
+  update,
+  delete: destroy,
 };
