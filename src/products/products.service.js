@@ -1,10 +1,10 @@
 const knex = require("../db/connection");
 
-function list () {
+function list() {
   return knex("products").select("*");
 }
 
-function read (product_id) {
+function read(product_id) {
   return knex("products").select("*").where({ product_id }).first();
 }
 
