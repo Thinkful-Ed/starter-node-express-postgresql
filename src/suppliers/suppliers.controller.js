@@ -14,55 +14,69 @@ const VALID_PROPERTIES = [
   "supplier_type_of_goods",
 ];
 
-function hasOnlyValidProperties (req, res, next) {
+function hasOnlyValidProperties(req, res, next) {
   const { data = {} } = req.body;
 
   const invalidFields = Object.keys(data).filter(
     (field) => !VALID_PROPERTIES.includes(field)
   );
 
-  if (invalidFields.length)
+  if (invalidFields.length) {
     return next({
       status: 400,
       message: `Invalid field(s): ${invalidFields.join(", ")}`,
     });
+  }
   next();
 }
 
 const hasRequiredProperties = hasProperties("supplier_name", "supplier_email");
 
-function create (req, res) {
+function create(req, res, next) {
   suppliersService
     .create(req.body.data)
-    .then((data) => res.status(201).json({ data }));
+    .then((data) => res.status(201).json({ data }))
+    .catch(next);
 }
 
-function supplierExists (req, res, next) {
-  suppliersService.read(req.params.supplierId).then((supplier) => {
-    if (supplier) {
-      res.locals.supplier = supplier;
-      return next();
-    }
-    next({ status: 404, message: `Supplier cannot be found.` });
-  });
+function supplierExists(req, res, next) {
+  suppliersService
+    .read(req.params.supplierId)
+    .then((supplier) => {
+      if (supplier) {
+        res.locals.supplier = supplier;
+        return next();
+      }
+      next({ status: 404, message: `Supplier cannot be found.` });
+    })
+    .catch(next);
 }
 
-function update (req, res) {
+function update(req, res, next) {
   const updatedSupplier = {
     ...req.body.data,
     supplier_id: res.locals.supplier.supplier_id,
   };
-  suppliersService.update(updatedSupplier).then((data) => res.json({ data }));
+  suppliersService
+    .update(updatedSupplier)
+    .then((data) => res.json({ data }))
+    .catch(next);
 }
 
-function destroy (req, res) {
+function destroy(req, res, next) {
   suppliersService
     .delete(res.locals.supplier.supplier_id)
-    .then(() => res.sendStatus(204));
+    .then(() => res.sendStatus(204))
+    .catch(next);
 }
 
 module.exports = {
   create: [hasOnlyValidProperties, hasRequiredProperties, create],
-  update: [supplierExists, hasOnlyValidProperties, hasRequiredProperties, update],
+  update: [
+    supplierExists,
+    hasOnlyValidProperties,
+    hasRequiredProperties,
+    update,
+  ],
   destroy: [supplierExists, destroy],
 };
