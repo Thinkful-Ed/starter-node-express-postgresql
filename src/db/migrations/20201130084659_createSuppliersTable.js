@@ -1,5 +1,5 @@
 exports.up = function (knex) {
-  return knex.schema.createTable("suppliers", table => {
+  return knex.schema.createTable("suppliers", (table) => {
     table.increments("supplier_id").primary();
     table.string("supplier_name");
     table.string("supplier_address_line_1");
