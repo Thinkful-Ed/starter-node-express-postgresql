@@ -8,7 +8,7 @@ function read(product_id) {
   return knex("products").select("*").where({ product_id }).first();
 }
 
-function listOutOfStockCount () {
+function listOutOfStockCount() {
   return knex("products")
     .select("product_quantity_in_stock as out_of_stock")
     .count("product_id")
@@ -16,7 +16,7 @@ function listOutOfStockCount () {
     .groupBy("out_of_stock");
 }
 
-function listPriceSummary () {
+function listPriceSummary() {
   return knex("products")
     .select("supplier_id")
     .min("product_price")
@@ -25,7 +25,7 @@ function listPriceSummary () {
     .groupBy("supplier_id");
 }
 
-function listTotalWeightByProduct () {
+function listTotalWeightByProduct() {
   return knex("products")
     .select(
       "product_sku",
