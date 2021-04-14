@@ -73,5 +73,5 @@ module.exports = {
     hasRequiredProperties,
     asyncErrorBoundary(update),
   ],
-  destroy: [asyncErrorBoundary(supplierExists), asyncErrorBoundary(destroy)],
+  delete: [asyncErrorBoundary(supplierExists), asyncErrorBoundary(destroy)],
 };
