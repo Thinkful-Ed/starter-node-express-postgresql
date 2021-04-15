@@ -2,9 +2,9 @@ const knex = require("../db/connection");
 const mapProperties = require("../utils/map-properties");
 
 const addCategory = mapProperties({
-  category_id: "category.id",
-  category_name: "category.name",
-  category_description: "category.description",
+  category_id: "category.category_id",
+  category_name: "category.category_name",
+  category_description: "category.category_description",
 });
 
 function list() {
