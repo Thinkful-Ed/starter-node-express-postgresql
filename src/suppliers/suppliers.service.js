@@ -15,8 +15,8 @@ function update(updatedSupplier) {
     .update(updatedSupplier, "*");
 }
 
-function destroy(supplierId) {
-  return knex("suppliers").where({ supplier_id: supplierId }).del();
+function destroy(supplier_id) {
+  return knex("suppliers").where({ supplier_id }).del();
 }
 
 module.exports = {
