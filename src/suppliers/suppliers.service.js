@@ -18,8 +18,13 @@ const update = (updatedSupplier) => {
     .update(updatedSupplier, "*");
 };
 
+const destroy = (supplier_id) => {
+  return knex("suppliers").select("*").where({ supplier_id }).del();
+};
+
 module.exports = {
   create,
   read,
   update,
+  destroy,
 };
