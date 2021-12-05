@@ -7,6 +7,19 @@ const create = (supplier) => {
     .then((createdRecords) => createdRecords[0]);
 };
 
+const read = (supplier_id) => {
+  return knex("suppliers").select("*").where({ supplier_id }).first();
+};
+
+const update = (updatedSupplier) => {
+  return knex("suppliers")
+    .select("*")
+    .where({ supplier_id: updatedSupplier.supplier_id })
+    .update(updatedSupplier, "*");
+};
+
 module.exports = {
   create,
+  read,
+  update,
 };

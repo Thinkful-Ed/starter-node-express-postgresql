@@ -1,4 +1,5 @@
 const suppliersService = require("./suppliers.service.js");
+const hasProperties = require("../errors/hasProperties");
 
 // Middlewares =============================================================================================================
 
@@ -14,6 +15,8 @@ const VALID_PROPERTIES = [
   "supplier_notes",
   "supplier_type_of_goods",
 ];
+
+const hasRequiredProperties = hasProperties("supplier_name", "supplier_email");
 
 // Check for valid field properties
 const hasValidProperties = (req, res, next) => {
@@ -32,11 +35,27 @@ const hasValidProperties = (req, res, next) => {
   next();
 };
 
+const supplierExists = (req, res, next) => {
+  suppliersService
+    .read(req.params.supplierId)
+    .then((supplier) => {
+      if (supplier) {
+        res.locals.supplier = supplier;
+        return next();
+      }
+      next({ status: 404, message: `Supplier cannot be found.` });
+    })
+    .catch(next);
+};
+
 // Resource Queries ====================================================================================
 
-async function create(req, res, next) {
-  res.status(201).json({ data: { supplier_name: "new supplier" } });
-}
+const create = (req, res, next) => {
+  suppliersService
+    .create(req.body.data)
+    .then((data) => res.status(201).json({ data }))
+    .catch(next);
+};
 
 async function update(req, res, next) {
   res.json({ data: { supplier_name: "updated supplier" } });
@@ -47,7 +66,7 @@ async function destroy(req, res, next) {
 }
 
 module.exports = {
-  create: [hasValidProperties],
-  update,
+  create: [hasValidProperties, hasRequiredProperties, create],
+  update: [hasValidProperties, hasRequiredProperties, update],
   delete: destroy,
 };
