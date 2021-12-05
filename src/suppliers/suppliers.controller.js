@@ -57,9 +57,19 @@ const create = (req, res, next) => {
     .catch(next);
 };
 
-async function update(req, res, next) {
-  res.json({ data: { supplier_name: "updated supplier" } });
-}
+const update = (req, res, next) => {
+  const updatedSupplier = {
+    ...req.body.data,
+    supplier_id: res.locals.supplier.supplier_id,
+  };
+
+  console.log("updatedSupplier:", updatedSupplier);
+
+  suppliersService
+    .update(updatedSupplier)
+    .then((data) => res.json({ data }))
+    .catch(next);
+};
 
 async function destroy(req, res, next) {
   res.sendStatus(204);
@@ -67,6 +77,6 @@ async function destroy(req, res, next) {
 
 module.exports = {
   create: [hasValidProperties, hasRequiredProperties, create],
-  update: [hasValidProperties, hasRequiredProperties, update],
+  update: [supplierExists, hasValidProperties, hasRequiredProperties, update],
   delete: destroy,
 };
