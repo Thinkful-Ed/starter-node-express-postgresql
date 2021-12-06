@@ -27,7 +27,12 @@ const list = async (req, res, next) => {
   res.json({ data });
 };
 
+const listOutOfStockCount = async (req, res, next) => {
+  res.json({ data: await productsService.listOutOfStockCount() });
+};
+
 module.exports = {
   list,
   read: [asyncErrorBoundary(productExists), read],
+  listOutOfStockCount: asyncErrorBoundary(listOutOfStockCount),
 };
