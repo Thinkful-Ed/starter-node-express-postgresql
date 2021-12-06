@@ -1,19 +1,17 @@
 const productsService = require("./products.service");
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 // Middlewares =============================================================================================================
 
-const productExists = (req, res, next) => {
-  productsService
-    .read(req.params.productId)
-    .then((product) => {
-      if (product) {
-        res.locals.product = product;
-        return next();
-      }
+const productExists = async (req, res, next) => {
+  const product = await productsService.read(req.params.productId);
 
-      next({ status: 404, message: `Product cannot be found.` });
-    })
-    .catch(next);
+  if (product) {
+    res.locals.product = product;
+    return next();
+  }
+
+  next({ status: 404, message: `Product cannot be found.` });
 };
 
 // Resource Queries ====================================================================================
@@ -23,14 +21,13 @@ function read(req, res, next) {
   res.json({ data });
 }
 
-const list = (req, res, next) => {
-  productsService
-    .list()
-    .then((data) => res.json({ data }))
-    .catch(next);
+const list = async (req, res, next) => {
+  const data = await productsService.list();
+
+  res.json({ data });
 };
 
 module.exports = {
   list,
-  read: [productExists, read],
+  read: [asyncErrorBoundary(productExists), read],
 };

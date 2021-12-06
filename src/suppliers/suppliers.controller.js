@@ -1,5 +1,6 @@
 const suppliersService = require("./suppliers.service.js");
 const hasProperties = require("../errors/hasProperties");
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 // Middlewares =============================================================================================================
 
@@ -35,29 +36,25 @@ const hasValidProperties = (req, res, next) => {
   next();
 };
 
-const supplierExists = (req, res, next) => {
-  suppliersService
-    .read(req.params.supplierId)
-    .then((supplier) => {
-      if (supplier) {
-        res.locals.supplier = supplier;
-        return next();
-      }
-      next({ status: 404, message: `Supplier cannot be found.` });
-    })
-    .catch(next);
+const supplierExists = async (req, res, next) => {
+  const supplier = await suppliersService.read(req.params.supplierId);
+
+  if (supplier) {
+    res.locals.supplier = supplier;
+    return next();
+  }
+  next({ status: 404, message: `Supplier cannot be found.` });
 };
 
 // Resource Queries ====================================================================================
 
-const create = (req, res, next) => {
-  suppliersService
-    .create(req.body.data)
-    .then((data) => res.status(201).json({ data }))
-    .catch(next);
+const create = async (req, res, next) => {
+  const data = await suppliersService.create(req.body.data);
+
+  res.status(201).json({ data });
 };
 
-const update = (req, res, next) => {
+const update = async (req, res, next) => {
   const updatedSupplier = {
     ...req.body.data,
     supplier_id: res.locals.supplier.supplier_id,
@@ -65,21 +62,30 @@ const update = (req, res, next) => {
 
   console.log("updatedSupplier:", updatedSupplier);
 
-  suppliersService
-    .update(updatedSupplier)
-    .then((data) => res.json({ data }))
-    .catch(next);
+  const data = await suppliersService.update(updatedSupplier);
+
+  res.json({ data });
 };
 
-const destroy = (req, res, next) => {
-  suppliersService
-    .destroy(res.locals.supplier.supplier_id)
-    .then(() => res.sendStatus(204))
-    .catch(next);
+const destroy = async (req, res, next) => {
+  const { supplier } = res.locals;
+
+  await suppliersService.destroy(supplier.supplier_id);
+
+  res.sendStatus(204);
 };
 
 module.exports = {
-  create: [hasValidProperties, hasRequiredProperties, create],
-  update: [supplierExists, hasValidProperties, hasRequiredProperties, update],
-  delete: [supplierExists, destroy],
+  create: [
+    hasValidProperties,
+    hasRequiredProperties,
+    asyncErrorBoundary(create),
+  ],
+  update: [
+    asyncErrorBoundary(supplierExists),
+    hasValidProperties,
+    hasRequiredProperties,
+    asyncErrorBoundary(update),
+  ],
+  delete: [asyncErrorBoundary(supplierExists), asyncErrorBoundary(destroy)],
 };
