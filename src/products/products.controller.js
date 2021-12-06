@@ -31,8 +31,18 @@ const listOutOfStockCount = async (req, res, next) => {
   res.json({ data: await productsService.listOutOfStockCount() });
 };
 
+const listPriceSummary = async (req, res, next) => {
+  res.json({ data: await productsService.listPriceSummary() });
+};
+
+const listTotalWeightByProduct = async (req, res, next) => {
+  res.json({ data: await productsService.listTotalWeightByProduct() });
+};
+
 module.exports = {
   list,
   read: [asyncErrorBoundary(productExists), read],
   listOutOfStockCount: asyncErrorBoundary(listOutOfStockCount),
+  listPriceSummary: asyncErrorBoundary(listPriceSummary),
+  listTotalWeightByProduct: asyncErrorBoundary(listTotalWeightByProduct),
 };
