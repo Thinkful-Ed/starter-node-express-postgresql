@@ -11,7 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "knex": "^0.21.12",
+    "lodash": "^4.17.19",
+    "pg": "^8.5.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"
