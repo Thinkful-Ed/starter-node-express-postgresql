@@ -1,6 +1,6 @@
 # Starter code: Node.js, Express, & PostgreSQL
 
-This starter code is intended to be run for the Node.js, Express, & PostgreSQL module in the Thinkful curriculum.
+This starter code is intended to be run for the Node.js, Express, & PostgreSQL module in the Chegg Skills curriculum.
 
 ## Existing files
 
@@ -24,14 +24,14 @@ This starter code closely follows the best practices and patterns established in
 
 ## Database setup
 
-1. Set up a new ElephantSQL database instance by following the instructions in the "PostgreSQL: Creating & Deleting Databases" checkpoint.
-1. After setting up your database instance, connect DBeaver to your new database instance by following the instructions in the "PostgreSQL: Installing DBeaver" checkpoint.
+1. Set up a new Render database instance by following the instructions in the "PostgreSQL: Creating & Deleting Databases" checkpoint.
+1. After setting up your database instance, connect DBeaver to your new database instance by following the instructions in the "PostgreSQL: Installing DBeaver" lesson.
 
 ## Installation
 
 1. Fork and clone this repository.
 1. Run `cp .env.sample .env`.
-1. Update your `.env` file with a connection URL to your ElephantSQL database instance. The connection URL can be found in your ElephantSQL database instance details (e.g. `"postgres://myfakedatabase:8t6FiWqSDF8GsR--7mrun245I9TofnWd@fakepostgres.db.elephantsql.com:5432/myfakedatabase"`).
+1. Update your `.env` file with a connection URL to your Render database instance. The connection URL can be found in your Render database instance details (e.g. `"postgres://myfakedatabase:8t6FiWqSDF8GsR--7mrun245I9TofnWd@fakepostgres.db.render.com:5432/myfakedatabase"`).
 1. Run `npm install` to install project dependencies.
 1. Run `npm run start:dev` to start your server in development mode.
 1. In your browser or Postman, navigate to `localhost:5000/products`. If your server is running properly, you should get back the following json response:
