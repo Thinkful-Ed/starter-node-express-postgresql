@@ -30,23 +30,26 @@ This starter code closely follows the best practices and patterns established in
 ## Installation
 
 1. Fork and clone this repository.
-1. Run `cp .env.sample .env`.
-1. Update your `.env` file with a connection URL to your Render database instance. The connection URL can be found in your Render database instance details (e.g. `"postgres://myfakedatabase:8t6FiWqSDF8GsR--7mrun245I9TofnWd@fakepostgres.db.render.com:5432/myfakedatabase"`).
-1. Run `npm install` to install project dependencies.
-1. Run `npm run start:dev` to start your server in development mode.
-1. In your browser or Postman, navigate to `localhost:5000/products`. If your server is running properly, you should get back the following json response:
+2. Run `cp .env.sample .env`.
+3. Update your `.env` file with a connection URL to your Render database instance. The connection URL can be found in your Render database instance details (e.g. `"postgres://myfakedatabase:8t6FiWqSDF8GsR--7mrun245I9TofnWd@fakepostgres.db.render.com:5432/myfakedatabase"`). Make sure to append `?ssl=true` to the end of the URL to ensure a secure connection (e.g. `"postgres://myfakedatabase:8t6FiWqSDF8GsR--7mrun245I9TofnWd@fakepostgres.db.render.com:5432/myfakedatabase?ssl=true"`).
+4. Run `npm install` to install project dependencies.
+5. Run `npm run start:dev` to start your server in development mode.
+6. In your browser or Postman, navigate to `localhost:5000/products`. If your server is running properly, you should get back the following JSON response:
 
 ```json
-{
-  "data": [
-    {
-      "product_title": "product 1"
-    },
-    {
-      "product_title": "product 2"
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "name": "Product 1",
+    "price": 19.99
+  },
+  {
+    "id": 2,
+    "name": "Product 2",
+    "price": 29.99
+  }
+]
 ```
+By appending `?ssl=true` to the connection URL, you'll ensure a secure connection to your database, resolving any SSL-related issues.
 
 If you have trouble getting the server to run, reach out for assistance.
