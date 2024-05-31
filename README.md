@@ -1,10 +1,10 @@
-# Starter code: Node.js, Express, & PostgreSQL
+# Starter code: Node.js, Express, and PostgreSQL
 
-This starter code is intended to be run for the Node.js, Express, & PostgreSQL module in the Chegg Skills curriculum.
+This starter code is intended to be run for the *Node.js, Express, and PostgreSQL* module in the Chegg Skills curriculum.
 
 ## Existing files
 
-As you work through the Node.js, Express & PostgreSQL module, you will be writing code that allows your controllers to connect to and query your PostgreSQL database via [Knex](http://knexjs.org/). The table below describes the files and folders in the starter code:
+As you work through the *Node.js, Express, and PostgreSQL* module, you will be writing code that allows your controllers to connect to and query your PostgreSQL database via [Knex](http://knexjs.org/). The table below describes the files and folders in the starter code:
 
 | Folder/file path                 | Description                                                                                                           |
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -31,7 +31,7 @@ This starter code closely follows the best practices and patterns established in
 
 1. Fork and clone this repository.
 2. Run `cp .env.sample .env`.
-3. Update your `.env` file with a connection URL to your Render database instance. The connection URL can be found in your Render database instance details (e.g. `"postgres://myfakedatabase:8t6FiWqSDF8GsR--7mrun245I9TofnWd@fakepostgres.db.render.com:5432/myfakedatabase"`). Make sure to append `?ssl=true` to the end of the URL to ensure a secure connection (e.g. `"postgres://myfakedatabase:8t6FiWqSDF8GsR--7mrun245I9TofnWd@fakepostgres.db.render.com:5432/myfakedatabase?ssl=true"`).
+3. Update your `.env` file with a connection URL to your Render database instance. The connection URL can be found in your Render database instance details (e.g., `"postgres://myfakedatabase:8t6FiWqSDF8GsR--7mrun245I9TofnWd@fakepostgres.db.render.com:5432/myfakedatabase"`). Make sure to append `?ssl=true` to the end of the URL to ensure a secure connection (e.g., `"postgres://myfakedatabase:8t6FiWqSDF8GsR--7mrun245I9TofnWd@fakepostgres.db.render.com:5432/myfakedatabase?ssl=true"`).
 4. Run `npm install` to install project dependencies.
 5. Run `npm run start:dev` to start your server in development mode.
 6. In your browser or Postman, navigate to `localhost:5000/products`. If your server is running properly, you should get back the following JSON response:
