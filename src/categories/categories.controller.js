@@ -1,11 +1,10 @@
+const categoriesService = require("./categories.service");
+
 async function list(req, res, next) {
-  res.json({
-    data: [
-      { category_name: "category 1" },
-      { category_name: "category 2" },
-      { category_name: "category 3" },
-    ],
-  });
+  categoriesService
+    .list()
+    .then((data) => res.json({ data }))
+    .catch(next);
 }
 
 module.exports = {
